@@ -13,9 +13,9 @@ public class FileUtils {
     /* PUBLIC METHODS */
 
     public static String getFileNameFromUrl(String url) {
-        int lastIndex = url.lastIndexOf("/");
-        String subUrl = url.substring(0, lastIndex);
-        String fileExtension = subUrl.substring(subUrl.lastIndexOf("."));
+//        int lastIndex = url.lastIndexOf("/");
+//        String subUrl = url.substring(0, lastIndex);
+        String fileExtension = url.substring(url.lastIndexOf("."));
         return "Document" + md5(url) + fileExtension;
     }
 

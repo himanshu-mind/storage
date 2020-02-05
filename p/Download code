@@ -1,3 +1,10 @@
+import android.content.Context;
+import android.os.Environment;
+
+import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class FileUtils {
 
     private static File educationDir;
@@ -6,7 +13,10 @@ public class FileUtils {
     /* PUBLIC METHODS */
 
     public static String getFileNameFromUrl(String url) {
-        return "Document" + md5(url) + ".jpg";
+        int lastIndex = url.lastIndexOf("/");
+        String subUrl = url.substring(0, lastIndex);
+        String fileExtension = subUrl.substring(subUrl.lastIndexOf("."));
+        return "Document" + md5(url) + fileExtension;
     }
 
     /* EDUCATION METHODS */
@@ -18,13 +28,13 @@ public class FileUtils {
 
     public static boolean isEducationDocumentExists(Context context, String url) {
         initDir(context);
-        File file = new File(educationDir, "Document" + md5(url) + ".jpg");
+        File file = new File(educationDir, getFileNameFromUrl(url));
         return file.exists();
     }
 
     public static String getEducationPathFromUrl(Context context, String url) {
         initDir(context);
-        File file = new File(educationDir, "Document" + md5(url) + ".jpg");
+        File file = new File(educationDir, getFileNameFromUrl(url));
         return file.getAbsolutePath();
     }
 
@@ -37,13 +47,13 @@ public class FileUtils {
 
     public static boolean isPublicationDocumentExists(Context context, String url) {
         initDir(context);
-        File file = new File(publicationDir, "Document" + md5(url) + ".jpg");
+        File file = new File(publicationDir, getFileNameFromUrl(url));
         return file.exists();
     }
 
     public static String getPublicationPathFromUrl(Context context, String url) {
         initDir(context);
-        File file = new File(publicationDir, "Document" + md5(url) + ".jpg");
+        File file = new File(publicationDir, getFileNameFromUrl(url));
         return file.getAbsolutePath();
     }
 
@@ -75,58 +85,3 @@ public class FileUtils {
     }
 
 }
-
-
------------------------------------------------------------------------------------------------------------------------
-PRDownloader calling code below
------------------------------------------------------------------------------------------------------------------------
-
-
-PRDownloader.initialize(getApplicationContext());
-
-        String url = "http://shapoorjiqa.infoaxon.com:/documents/20128/41130/vhbh+hg+hhh+2020.jpg/9983535a-3030-4dae-19c9-d7192f549144?version=1.0&t=1580668012975";
-        String dirPath = FileUtils.getEducationDirectory(this);
-        String fileName = FileUtils.getFileNameFromUrl(url);
-
-        PRDownloader.download(url, dirPath, fileName)
-                .build()
-                .setOnStartOrResumeListener(new OnStartOrResumeListener() {
-                    @Override
-                    public void onStartOrResume() {
-                        Log.e(TAG, "onStartOrResume: ");
-                    }
-                })
-                .setOnPauseListener(new OnPauseListener() {
-                    @Override
-                    public void onPause() {
-                        Log.e(TAG, "onPause: ");
-                    }
-                })
-                .setOnCancelListener(new OnCancelListener() {
-                    @Override
-                    public void onCancel() {
-                        Log.e(TAG, "onCancel: ");
-                    }
-                })
-                .setOnProgressListener(new OnProgressListener() {
-                    @Override
-                    public void onProgress(Progress progress) {
-                        Log.e(TAG, "onProgress: " + progress);
-                    }
-                })
-                .start(new OnDownloadListener() {
-                    @Override
-                    public void onDownloadComplete() {
-                        Log.e(TAG, "onDownloadComplete: ");
-                    }
-
-                    @Override
-                    public void onError(Error error) {
-                        Log.e(TAG, "onError: ");
-                    }
-                });
-                
-                
-
-
-

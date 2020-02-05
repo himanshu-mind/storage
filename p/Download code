@@ -1,0 +1,132 @@
+public class FileUtils {
+
+    private static File educationDir;
+    private static File publicationDir;
+
+    /* PUBLIC METHODS */
+
+    public static String getFileNameFromUrl(String url) {
+        return "Document" + md5(url) + ".jpg";
+    }
+
+    /* EDUCATION METHODS */
+
+    public static String getEducationDirectory(Context context) {
+        initDir(context);
+        return educationDir.getAbsolutePath();
+    }
+
+    public static boolean isEducationDocumentExists(Context context, String url) {
+        initDir(context);
+        File file = new File(educationDir, "Document" + md5(url) + ".jpg");
+        return file.exists();
+    }
+
+    public static String getEducationPathFromUrl(Context context, String url) {
+        initDir(context);
+        File file = new File(educationDir, "Document" + md5(url) + ".jpg");
+        return file.getAbsolutePath();
+    }
+
+    /* PUBLICATION METHODS */
+
+    public static String getPublicationDirectory(Context context) {
+        initDir(context);
+        return publicationDir.getAbsolutePath();
+    }
+
+    public static boolean isPublicationDocumentExists(Context context, String url) {
+        initDir(context);
+        File file = new File(publicationDir, "Document" + md5(url) + ".jpg");
+        return file.exists();
+    }
+
+    public static String getPublicationPathFromUrl(Context context, String url) {
+        initDir(context);
+        File file = new File(publicationDir, "Document" + md5(url) + ".jpg");
+        return file.getAbsolutePath();
+    }
+
+    /* PRIVATE METHODS */
+
+    private static void initDir(Context context) {
+        File downloadDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        File kmsDir = new File(downloadDir, "KMS");
+        if (!kmsDir.exists()) kmsDir.mkdir();
+        educationDir = new File(kmsDir, "Education");
+        if (!educationDir.exists()) educationDir.mkdir();
+        publicationDir = new File(kmsDir, "Publication");
+        if (!publicationDir.exists()) publicationDir.mkdir();
+    }
+
+    private static String md5(String s) {
+        try {
+            MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
+            digest.update(s.getBytes());
+            byte messageDigest[] = digest.digest();
+            StringBuffer hexString = new StringBuffer();
+            for (int i = 0; i < messageDigest.length; i++)
+                hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+}
+
+
+-----------------------------------------------------------------------------------------------------------------------
+PRDownloader calling code below
+-----------------------------------------------------------------------------------------------------------------------
+
+
+PRDownloader.initialize(getApplicationContext());
+
+        String url = "http://shapoorjiqa.infoaxon.com:/documents/20128/41130/vhbh+hg+hhh+2020.jpg/9983535a-3030-4dae-19c9-d7192f549144?version=1.0&t=1580668012975";
+        String dirPath = FileUtils.getEducationDirectory(this);
+        String fileName = FileUtils.getFileNameFromUrl(url);
+
+        PRDownloader.download(url, dirPath, fileName)
+                .build()
+                .setOnStartOrResumeListener(new OnStartOrResumeListener() {
+                    @Override
+                    public void onStartOrResume() {
+                        Log.e(TAG, "onStartOrResume: ");
+                    }
+                })
+                .setOnPauseListener(new OnPauseListener() {
+                    @Override
+                    public void onPause() {
+                        Log.e(TAG, "onPause: ");
+                    }
+                })
+                .setOnCancelListener(new OnCancelListener() {
+                    @Override
+                    public void onCancel() {
+                        Log.e(TAG, "onCancel: ");
+                    }
+                })
+                .setOnProgressListener(new OnProgressListener() {
+                    @Override
+                    public void onProgress(Progress progress) {
+                        Log.e(TAG, "onProgress: " + progress);
+                    }
+                })
+                .start(new OnDownloadListener() {
+                    @Override
+                    public void onDownloadComplete() {
+                        Log.e(TAG, "onDownloadComplete: ");
+                    }
+
+                    @Override
+                    public void onError(Error error) {
+                        Log.e(TAG, "onError: ");
+                    }
+                });
+                
+                
+
+
+
